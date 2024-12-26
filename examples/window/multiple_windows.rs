@@ -1,11 +1,12 @@
 //! Uses two windows to visualize a 3D model from different angles.
 
+use bevy::input_focus::InputDispatchPlugin;
 use bevy::{prelude::*, render::camera::RenderTarget, window::WindowRef};
 
 fn main() {
     App::new()
         // By default, a primary window gets spawned by `WindowPlugin`, contained in `DefaultPlugins`
-        .add_plugins(DefaultPlugins)
+        .add_plugins((DefaultPlugins, InputDispatchPlugin))
         .add_systems(Startup, setup_scene)
         .run();
 }

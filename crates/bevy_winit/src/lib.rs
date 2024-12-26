@@ -1,5 +1,5 @@
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
-#![forbid(unsafe_code)]
+// #![forbid(unsafe_code)]
 #![doc(
     html_logo_url = "https://bevyengine.org/assets/icon.png",
     html_favicon_url = "https://bevyengine.org/assets/icon.png"
@@ -24,6 +24,7 @@ use winit::{event_loop::EventLoop, window::WindowId};
 use bevy_a11y::AccessibilityRequested;
 use bevy_app::{App, Last, Plugin};
 use bevy_ecs::prelude::*;
+use bevy_hierarchy::Parent;
 use bevy_window::{exit_on_all_closed, Window, WindowCreated};
 use system::{changed_windows, check_keyboard_focus_lost, despawn_windows};
 pub use system::{create_monitors, create_windows};
@@ -198,6 +199,7 @@ pub type CreateWindowParams<'w, 's, F = ()> = (
             Entity,
             &'static mut Window,
             Option<&'static RawHandleWrapperHolder>,
+            Option<&'static Parent>,
         ),
         F,
     >,

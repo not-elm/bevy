@@ -56,7 +56,7 @@ alloc_instead_of_core = "warn"
 [workspace.lints.rust]
 missing_docs = "warn"
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(docsrs_dep)'] }
-unsafe_code = "deny"
+#unsafe_code = "deny"
 unsafe_op_in_unsafe_fn = "warn"
 unused_qualifications = "warn"
 
@@ -3303,6 +3303,11 @@ wasm = true
 [[example]]
 name = "multiple_windows"
 path = "examples/window/multiple_windows.rs"
+doc-scrape-examples = true
+
+[[example]]
+name = "child_window"
+path = "examples/window/child_window.rs"
 doc-scrape-examples = true
 
 [package.metadata.example.multiple_windows]

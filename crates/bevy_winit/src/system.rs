@@ -56,7 +56,7 @@ pub fn create_windows<F: QueryFilter + 'static>(
         monitors,
     ): SystemParamItem<CreateWindowParams<F>>,
 ) {
-    for (entity, mut window, handle_holder) in &mut created_windows {
+    for (entity, mut window, handle_holder, parent_window_entity) in &mut created_windows {
         if winit_windows.get_window(entity).is_some() {
             continue;
         }
@@ -75,6 +75,7 @@ pub fn create_windows<F: QueryFilter + 'static>(
             &mut handlers,
             &accessibility_requested,
             &monitors,
+            parent_window_entity,
         );
 
         if let Some(theme) = winit_window.theme() {

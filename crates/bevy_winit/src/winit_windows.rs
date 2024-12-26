@@ -1,5 +1,6 @@
 use bevy_a11y::AccessibilityRequested;
 use bevy_ecs::entity::Entity;
+use raw_window_handle::HasRawWindowHandle;
 
 use bevy_ecs::entity::EntityHashMap;
 use bevy_utils::{tracing::warn, HashMap};
@@ -8,20 +9,20 @@ use bevy_window::{
     WindowWrapper,
 };
 
-use winit::{
-    dpi::{LogicalSize, PhysicalPosition},
-    error::ExternalError,
-    event_loop::ActiveEventLoop,
-    monitor::{MonitorHandle, VideoModeHandle},
-    window::{CursorGrabMode as WinitCursorGrabMode, Fullscreen, Window as WinitWindow, WindowId},
-};
-
 use crate::{
     accessibility::{
         prepare_accessibility_for_window, AccessKitAdapters, WinitActionRequestHandlers,
     },
     converters::{convert_enabled_buttons, convert_window_level, convert_window_theme},
     winit_monitors::WinitMonitors,
+};
+use bevy_hierarchy::Parent;
+use winit::{
+    dpi::{LogicalSize, PhysicalPosition},
+    error::ExternalError,
+    event_loop::ActiveEventLoop,
+    monitor::{MonitorHandle, VideoModeHandle},
+    window::{CursorGrabMode as WinitCursorGrabMode, Fullscreen, Window as WinitWindow, WindowId},
 };
 
 /// A resource mapping window entities to their `winit`-backend [`Window`](winit::window::Window)
@@ -52,9 +53,16 @@ impl WinitWindows {
         handlers: &mut WinitActionRequestHandlers,
         accessibility_requested: &AccessibilityRequested,
         monitors: &WinitMonitors,
+        parent_window_entity: Option<&Parent>,
     ) -> &WindowWrapper<WinitWindow> {
         let mut winit_window_attributes = WinitWindow::default_attributes();
-
+        if let Some(parent_window_handle) = parent_window_entity
+            .and_then(|parent| self.get_window(parent.get()))
+            .and_then(|parent_window| parent_window.raw_window_handle().ok())
+        {
+            winit_window_attributes =
+                unsafe { winit_window_attributes.with_parent_window(Some(parent_window_handle)) };
+        }
         // Due to a UIA limitation, winit windows need to be invisible for the
         // AccessKit adapter is initialized.
         winit_window_attributes = winit_window_attributes.with_visible(false);
